@@ -3,58 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relógio Digital Premium | Online</title>
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <link rel="manifest" href="manifest.json">
+    <title>Relógio Digital Premium | Controle Total do Tempo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4a6bff;
+            --dark: #121212;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui;
+            background: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            width: 100%;
+        }
+        
+        .clock-frame {
+            flex: 1;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            min-height: 400px;
+        }
+        
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--dark);
+            border: 1px solid var(--gray);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                gap: 0.5rem;
+            }
+            
+            .btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <h1>Relógio Digital Premium</h1>
+        <p>Todas as funcionalidades para controle preciso do tempo</p>
+    </header>
+
     <div class="container">
-        <header>
-            <h1>Relógio Digital Premium</h1>
-            <p>Todas as funcionalidades para controle preciso do tempo</p>
-        </header>
+        <div class="clock-frame">
+            <iframe id="clockFrame" src="relogio.html" title="Relógio Digital Premium"></iframe>
+        </div>
 
-        <main>
-            <div class="clock-frame-container">
-                <iframe id="clockFrame" src="relogio.html" title="Relógio Digital"></iframe>
-            </div>
-
-            <div class="controls">
-                <button onclick="toggleFullscreen()" class="btn-primary">
-                    <i class="fas fa-expand"></i> Tela Cheia
-                </button>
-                <button onclick="openColorPicker()" class="btn-secondary">
-                    <i class="fas fa-palette"></i> Cores
-                </button>
-                <button onclick="showWorldTime()" class="btn-secondary">
-                    <i class="fas fa-globe"></i> Fusos
-                </button>
-                <button onclick="enableNotifications()" class="btn-primary">
-                    <i class="fas fa-bell"></i> Notificações
-                </button>
-            </div>
-        </main>
-
-        <footer>
-            <p>Relógio Digital Premium - Uso Livre</p>
-        </footer>
+        <div class="controls">
+            <button onclick="toggleFullscreen()" class="btn btn-primary">
+                <i class="fas fa-expand"></i> Tela Cheia
+            </button>
+            <button onclick="openColorPicker()" class="btn btn-secondary">
+                <i class="fas fa-palette"></i> Personalizar
+            </button>
+            <button onclick="showWorldTime()" class="btn btn-secondary">
+                <i class="fas fa-globe"></i> Fusos Horários
+            </button>
+            <button onclick="enableNotifications()" class="btn btn-primary">
+                <i class="fas fa-bell"></i> Notificações
+            </button>
+        </div>
     </div>
 
-    <script src="assets/js/worldtime.js"></script>
-    <script src="assets/js/color-picker.js"></script>
+    <footer>
+        Relógio Digital Premium - Uso Livre
+    </footer>
+
     <script>
-        // Controles principais
+        // Controle de Tela Cheia
         function toggleFullscreen() {
             const frame = document.getElementById('clockFrame');
             if (!document.fullscreenElement) {
                 frame.requestFullscreen().catch(err => {
-                    console.error("Erro ao entrar em tela cheia:", err);
+                    alert(`Erro: ${err.message}`);
                 });
             } else {
                 document.exitFullscreen();
             }
         }
 
+        // Personalização de Cores
         function openColorPicker() {
             const frame = document.getElementById('clockFrame');
             frame.contentWindow.postMessage({
@@ -62,6 +168,7 @@
             }, '*');
         }
 
+        // Fusos Horários
         function showWorldTime() {
             const frame = document.getElementById('clockFrame');
             frame.contentWindow.postMessage({
@@ -69,6 +176,7 @@
             }, '*');
         }
 
+        // Notificações
         function enableNotifications() {
             Notification.requestPermission().then(permission => {
                 if (permission === 'granted') {
@@ -76,23 +184,20 @@
                     frame.contentWindow.postMessage({
                         type: 'NOTIFICATIONS_ENABLED'
                     }, '*');
+                    alert('Notificações ativadas com sucesso!');
                 }
             });
         }
 
-        // Recebe mensagens do relógio
+        // Comunicação com o relógio
         window.addEventListener('message', (event) => {
             if (event.data.type === 'ALARM_TRIGGERED' && Notification.permission === 'granted') {
                 new Notification('⏰ Alarme!', {
-                    body: 'Seu alarme está tocando!',
-                    icon: 'assets/images/icon.png',
-                    vibrate: [200, 100, 200]
+                    body: 'Hora de acordar!',
+                    icon: 'https://cdn-icons-png.flaticon.com/512/3114/3114883.png'
                 });
             }
         });
     </script>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
 </html>
-
-
