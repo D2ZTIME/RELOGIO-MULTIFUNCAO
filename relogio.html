@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relógio Digital</title>
+    <title>Relógio Digital Premium</title>
     <style>
-        /* Estilos principais do relógio */
         :root {
             --bg-color: #121212;
             --text-color: #ffffff;
@@ -19,59 +18,45 @@
             padding: 0;
             background: var(--bg-color);
             color: var(--text-color);
-            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
         
-        /* Restante dos estilos do relógio... */
+        .clock-container {
+            background: var(--bg-color);
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+        }
+        
+        .time {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
-    <!-- Interface do relógio -->
-    <div class="clock-app">
-        <!-- Abas e controles do relógio -->
-    </div>
-
-    <!-- Painel de Personalização (oculto por padrão) -->
-    <div id="colorPicker" class="color-panel">
-        <!-- Interface de seleção de cores -->
-    </div>
-
-    <!-- Painel de Fusos Horários (oculto por padrão) -->
-    <div id="worldTime" class="world-time-panel">
-        <!-- Mapa de fusos horários -->
+    <div class="clock-container">
+        <div class="time" id="time">00:00:00</div>
+        <div class="date" id="date">Segunda-feira, 01 de Janeiro de 2023</div>
     </div>
 
     <script>
-        // Comunicação com a página principal
-        window.addEventListener('message', function(event) {
-            switch(event.data.type) {
-                case 'OPEN_COLOR_PICKER':
-                    document.getElementById('colorPicker').style.display = 'block';
-                    break;
-                    
-                case 'SHOW_WORLD_TIME':
-                    document.getElementById('worldTime').style.display = 'block';
-                    break;
-                    
-                case 'NOTIFICATIONS_ENABLED':
-                    // Ativa notificações
-                    break;
-            }
-        });
-
-        // Quando o alarme tocar
-        function triggerAlarm() {
-            // Toca o som
-            // Envia notificação para a página principal
-            window.parent.postMessage({
-                type: 'ALARM_TRIGGERED'
-            }, '*');
-            
-            // Mostra notificação local se permitido
-            if (Notification.permission === 'granted') {
-                new Notification('Alarme!');
-            }
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('time').textContent = now.toLocaleTimeString();
+            document.getElementById('date').textContent = now.toLocaleDateString('pt-BR', { 
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long', 
+                year: 'numeric' 
+            });
         }
+        
+        setInterval(updateTime, 1000);
+        updateTime();
     </script>
 </body>
 </html>
