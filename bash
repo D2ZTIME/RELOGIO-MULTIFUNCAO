@@ -1,4 +1,3 @@
-
-git add .
-git commit -m "Corrige estrutura de pastas"
+git mv índice.html index.html
+git commit -m "Corrige nome do arquivo principal"
 git push origin main
