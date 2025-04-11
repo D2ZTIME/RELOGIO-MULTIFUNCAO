@@ -1,4 +1,4 @@
-git mv Rel-gio-Digital-Premium/* .
-git rm -r Rel-gio-Digital-Premium
+
+git add .
 git commit -m "Corrige estrutura de pastas"
 git push origin main
