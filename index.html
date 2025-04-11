@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relógio Digital Premium | Controle Total do Tempo</title>
+    <title>Relógio Digital Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #4a6bff;
             --primary-dark: #3a56cc;
+            --secondary: #6c757d;
             --dark: #121212;
             --light: #f8f9fa;
-            --gray: #6c757d;
-            --border: #e0e0e0;
+            --success: #4CAF50;
+            --danger: #f44336;
+            --warning: #ff9800;
         }
         
         * {
@@ -26,260 +28,483 @@
             background: var(--light);
             color: var(--dark);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            line-height: 1.6;
+            overflow: hidden;
         }
         
-        header {
+        /* Botões flutuantes */
+        .float-btn {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
             background: var(--primary);
             color: white;
-            text-align: center;
-            padding: 2.5rem 1rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
-        h1 {
-            font-size: 2.2rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .container {
-            flex: 1;
             display: flex;
-            flex-direction: column;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
-            width: 100%;
-        }
-        
-        .clock-frame {
-            flex: 1;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-            min-height: 500px;
-            border: 1px solid var(--border);
-            background: white;
-        }
-        
-        iframe {
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            z-index: 100;
             border: none;
-            width: 100%;
-            height: 100%;
+            font-size: 1.2rem;
+        }
+        
+        .float-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+        }
+        
+        /* Posicionamento dos botões */
+        #btnRelogio {
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+        }
+        
+        #btnCronometro {
+            bottom: 30px;
+            right: 110px;
+            background: var(--success);
+        }
+        
+        #btnAlarme {
+            bottom: 30px;
+            right: 190px;
+            background: var(--warning);
+        }
+        
+        #btnTelaCheia {
+            top: 30px;
+            right: 30px;
+        }
+        
+        #btnPersonalizar {
+            top: 30px;
+            right: 110px;
+            background: var(--secondary);
+        }
+        
+        #btnFusos {
+            top: 30px;
+            right: 190px;
+            background: var(--secondary);
+        }
+        
+        #btnNotificacoes {
+            top: 30px;
+            right: 270px;
+        }
+        
+        /* Container do relógio */
+        .clock-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            transition: all 0.3s;
+        }
+        
+        /* Estilos das abas */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .tab-content.active {
             display: block;
         }
         
-        .controls {
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Estilos do relógio */
+        .time {
+            font-size: 5rem;
+            font-weight: 300;
+            text-align: center;
+        }
+        
+        .date {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-top: 1rem;
+            opacity: 0.8;
+        }
+        
+        /* Estilos do cronômetro */
+        .chrono-controls {
             display: flex;
+            justify-content: center;
             gap: 1rem;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 1.5rem;
+            margin-top: 2rem;
         }
         
-        .btn {
-            padding: 0.8rem 1.8rem;
+        .chrono-btn {
+            padding: 0.8rem 1.5rem;
             border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
             border: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.6rem;
-            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 600;
         }
         
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(74, 107, 255, 0.2);
-        }
-        
-        .btn-secondary {
-            background: white;
-            color: var(--dark);
-            border: 1px solid var(--border);
-        }
-        
-        .btn-secondary:hover {
-            background: #f0f0f0;
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        footer {
-            text-align: center;
-            padding: 1.5rem;
-            color: var(--gray);
-            font-size: 0.9rem;
-            border-top: 1px solid var(--border);
-            margin-top: auto;
-        }
-        
-        .features {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            justify-content: center;
-            margin: 2rem 0;
-        }
-        
-        .feature-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            width: 160px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border: 1px solid var(--border);
-        }
-        
+        /* Responsividade */
         @media (max-width: 768px) {
-            .clock-frame {
-                min-height: 400px;
+            .time {
+                font-size: 3rem;
             }
             
-            .btn {
-                padding: 0.7rem 1.2rem;
-                font-size: 0.9rem;
+            .float-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1rem;
             }
             
-            h1 {
-                font-size: 1.8rem;
-            }
+            #btnCronometro { right: 90px; }
+            #btnAlarme { right: 150px; }
+            #btnPersonalizar { right: 90px; }
+            #btnFusos { right: 150px; }
+            #btnNotificacoes { right: 210px; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Relógio Digital Premium</h1>
-        <p>Controle preciso do tempo com design intuitivo</p>
-    </header>
+    <!-- Botões flutuantes -->
+    <button id="btnRelogio" class="float-btn" title="Relógio">
+        <i class="fas fa-clock"></i>
+    </button>
+    
+    <button id="btnCronometro" class="float-btn" title="Cronômetro">
+        <i class="fas fa-stopwatch"></i>
+    </button>
+    
+    <button id="btnAlarme" class="float-btn" title="Alarme">
+        <i class="fas fa-bell"></i>
+    </button>
+    
+    <button id="btnTelaCheia" class="float-btn" title="Tela Cheia">
+        <i class="fas fa-expand"></i>
+    </button>
+    
+    <button id="btnPersonalizar" class="float-btn" title="Personalizar">
+        <i class="fas fa-palette"></i>
+    </button>
+    
+    <button id="btnFusos" class="float-btn" title="Fusos Horários">
+        <i class="fas fa-globe"></i>
+    </button>
+    
+    <button id="btnNotificacoes" class="float-btn" title="Notificações">
+        <i class="fas fa-bell-slash"></i>
+    </button>
 
-    <div class="container">
-        <div class="clock-frame">
-            <iframe id="clockFrame" src="relogio.html" title="Relógio Digital Premium"></iframe>
+    <!-- Conteúdo das abas -->
+    <div class="clock-container">
+        <!-- Aba Relógio -->
+        <div id="relogioTab" class="tab-content active">
+            <div class="time" id="clock">00:00:00</div>
+            <div class="date" id="date">Segunda-feira, 01 de Janeiro</div>
         </div>
-
-        <div class="features">
-            <div class="feature-card">
-                <i class="fas fa-clock fa-2x" style="color: var(--primary); margin-bottom: 0.8rem;"></i>
-                <h3>Relógio</h3>
-                <p style="font-size: 0.9rem; color: var(--gray);">Precisão absoluta</p>
+        
+        <!-- Aba Cronômetro -->
+        <div id="cronometroTab" class="tab-content">
+            <div class="time" id="chronoDisplay">00:00:00.000</div>
+            <div class="chrono-controls">
+                <button class="chrono-btn" id="btnStart" style="background: var(--success); color: white;">
+                    <i class="fas fa-play"></i> Iniciar
+                </button>
+                <button class="chrono-btn" id="btnPause" style="background: var(--warning); color: white;">
+                    <i class="fas fa-pause"></i> Pausar
+                </button>
+                <button class="chrono-btn" id="btnReset" style="background: var(--danger); color: white;">
+                    <i class="fas fa-redo"></i> Resetar
+                </button>
             </div>
-            <div class="feature-card">
-                <i class="fas fa-stopwatch fa-2x" style="color: var(--primary); margin-bottom: 0.8rem;"></i>
-                <h3>Cronômetro</h3>
-                <p style="font-size: 0.9rem; color: var(--gray);">Milissegundos</p>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-bell fa-2x" style="color: var(--primary); margin-bottom: 0.8rem;"></i>
-                <h3>Alarme</h3>
-                <p style="font-size: 0.9rem; color: var(--gray);">Multiplos tons</p>
-            </div>
+            <div id="lapsContainer" style="margin-top: 2rem; text-align: center;"></div>
         </div>
-
-        <div class="controls">
-            <button onclick="toggleFullscreen()" class="btn btn-primary">
-                <i class="fas fa-expand"></i> Tela Cheia
-            </button>
-            <button onclick="openColorPicker()" class="btn btn-secondary">
-                <i class="fas fa-palette"></i> Personalizar
-            </button>
-            <button onclick="showWorldTime()" class="btn btn-secondary">
-                <i class="fas fa-globe"></i> Fusos
-            </button>
-            <button onclick="enableNotifications()" class="btn btn-primary">
-                <i class="fas fa-bell"></i> Notificações
-            </button>
+        
+        <!-- Aba Alarme -->
+        <div id="alarmeTab" class="tab-content">
+            <div style="text-align: center;">
+                <div class="time" style="margin-bottom: 2rem;">Alarme</div>
+                <div style="margin-bottom: 1.5rem;">
+                    <input type="time" id="alarmTime" style="padding: 0.8rem; border-radius: 8px; border: 1px solid #ddd;">
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <select id="alarmSound" style="padding: 0.8rem; border-radius: 8px; border: 1px solid #ddd;">
+                        <option value="sound1">Tom Clássico</option>
+                        <option value="sound2">Beep Digital</option>
+                        <option value="sound3">Alerta Urgente</option>
+                    </select>
+                </div>
+                <button id="btnSetAlarm" style="padding: 0.8rem 1.5rem; background: var(--primary); color: white; border: none; border-radius: 50px; cursor: pointer;">
+                    <i class="fas fa-bell"></i> Definir Alarme
+                </button>
+                <div id="alarmStatus" style="margin-top: 1.5rem; font-size: 1.2rem;"></div>
+            </div>
         </div>
     </div>
 
-    <footer>
-        Relógio Digital Premium - Projeto Open Source
-    </footer>
+    <audio id="alarmSoundPlayer" preload="auto"></audio>
 
     <script>
-        // Controle de Tela Cheia
+        // Variáveis globais
+        let currentTab = 'relogio';
+        let chronoInterval;
+        let chronoStartTime;
+        let chronoElapsed = 0;
+        let chronoRunning = false;
+        let alarmInterval;
+        let activeAlarm = null;
+        let notificationPermission = false;
+        
+        // Elementos DOM
+        const clockElement = document.getElementById('clock');
+        const dateElement = document.getElementById('date');
+        const chronoDisplay = document.getElementById('chronoDisplay');
+        const lapsContainer = document.getElementById('lapsContainer');
+        const alarmTimeInput = document.getElementById('alarmTime');
+        const alarmStatus = document.getElementById('alarmStatus');
+        const alarmSoundPlayer = document.getElementById('alarmSoundPlayer');
+        
+        // Sons de alarme (substitua por URLs reais)
+        const alarmSounds = {
+            sound1: 'https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg',
+            sound2: 'https://actions.google.com/sounds/v1/alarms/beep_short.ogg',
+            sound3: 'https://actions.google.com/sounds/v1/alarms/medium_bell_ringing_near.ogg'
+        };
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            // Atualiza o relógio principal
+            updateClock();
+            setInterval(updateClock, 1000);
+            
+            // Configura eventos dos botões flutuantes
+            setupFloatButtons();
+            
+            // Configura controles do cronômetro
+            setupChronoControls();
+            
+            // Configura alarme
+            setupAlarm();
+            
+            // Verifica permissão de notificação
+            checkNotificationPermission();
+        });
+        
+        function updateClock() {
+            const now = new Date();
+            clockElement.textContent = now.toLocaleTimeString('pt-BR');
+            dateElement.textContent = now.toLocaleDateString('pt-BR', { 
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long' 
+            });
+        }
+        
+        function setupFloatButtons() {
+            // Botões de navegação
+            document.getElementById('btnRelogio').addEventListener('click', () => switchTab('relogio'));
+            document.getElementById('btnCronometro').addEventListener('click', () => switchTab('cronometro'));
+            document.getElementById('btnAlarme').addEventListener('click', () => switchTab('alarme'));
+            
+            // Botões de ação
+            document.getElementById('btnTelaCheia').addEventListener('click', toggleFullscreen);
+            document.getElementById('btnPersonalizar').addEventListener('click', openColorPicker);
+            document.getElementById('btnFusos').addEventListener('click', showWorldTime);
+            document.getElementById('btnNotificacoes').addEventListener('click', toggleNotifications);
+        }
+        
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tab}Tab`).classList.add('active');
+        }
+        
         function toggleFullscreen() {
-            const frame = document.getElementById('clockFrame');
             if (!document.fullscreenElement) {
-                frame.requestFullscreen().catch(err => {
+                document.documentElement.requestFullscreen().catch(err => {
                     console.error("Erro ao ativar tela cheia:", err);
                 });
             } else {
                 document.exitFullscreen();
             }
         }
-
-        // Personalização
+        
         function openColorPicker() {
-            const frame = document.getElementById('clockFrame');
-            frame.contentWindow.postMessage({
-                type: 'OPEN_COLOR_PICKER'
-            }, '*');
+            alert("Seletor de cores será implementado aqui!");
+            // Implementação do seletor de cores
         }
-
-        // Fusos Horários
+        
         function showWorldTime() {
-            const frame = document.getElementById('clockFrame');
-            frame.contentWindow.postMessage({
-                type: 'SHOW_WORLD_TIME'
-            }, '*');
+            alert("Visualização de fusos horários será implementada aqui!");
+            // Implementação dos fusos horários
         }
-
-        // Notificações
-        function enableNotifications() {
-            if (!("Notification" in window)) {
-                alert("Seu navegador não suporta notificações!");
-                return;
+        
+        function toggleNotifications() {
+            if (!notificationPermission) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        notificationPermission = true;
+                        document.getElementById('btnNotificacoes').innerHTML = '<i class="fas fa-bell"></i>';
+                        alert("Notificações ativadas com sucesso!");
+                    }
+                });
+            } else {
+                document.getElementById('btnNotificacoes').innerHTML = '<i class="fas fa-bell-slash"></i>';
+                notificationPermission = false;
             }
-
-            Notification.requestPermission().then(permission => {
-                if (permission === 'granted') {
-                    const frame = document.getElementById('clockFrame');
-                    frame.contentWindow.postMessage({
-                        type: 'NOTIFICATIONS_ENABLED'
-                    }, '*');
-                    
-                    // Feedback visual
-                    const btn = document.querySelector('[onclick="enableNotifications()"]');
-                    btn.innerHTML = '<i class="fas fa-check"></i> Notificações Ativas';
-                    btn.style.background = '#4CAF50';
-                }
-            });
         }
-
-        // Recebe mensagens do relógio
-        window.addEventListener('message', (event) => {
-            if (event.data.type === 'ALARM_TRIGGERED') {
-                if (Notification.permission === 'granted') {
+        
+        function checkNotificationPermission() {
+            if (Notification.permission === 'granted') {
+                notificationPermission = true;
+                document.getElementById('btnNotificacoes').innerHTML = '<i class="fas fa-bell"></i>';
+            }
+        }
+        
+        function setupChronoControls() {
+            const btnStart = document.getElementById('btnStart');
+            const btnPause = document.getElementById('btnPause');
+            const btnReset = document.getElementById('btnReset');
+            let laps = [];
+            
+            btnStart.addEventListener('click', startChrono);
+            btnPause.addEventListener('click', pauseChrono);
+            btnReset.addEventListener('click', resetChrono);
+            
+            function startChrono() {
+                if (!chronoRunning) {
+                    chronoStartTime = Date.now() - chronoElapsed;
+                    chronoInterval = setInterval(updateChrono, 10);
+                    chronoRunning = true;
+                }
+            }
+            
+            function pauseChrono() {
+                if (chronoRunning) {
+                    clearInterval(chronoInterval);
+                    chronoRunning = false;
+                }
+            }
+            
+            function resetChrono() {
+                clearInterval(chronoInterval);
+                chronoRunning = false;
+                chronoElapsed = 0;
+                chronoDisplay.textContent = '00:00:00.000';
+                laps = [];
+                lapsContainer.innerHTML = '';
+            }
+            
+            function updateChrono() {
+                const elapsed = Date.now() - chronoStartTime;
+                chronoElapsed = elapsed;
+                
+                const hours = Math.floor(elapsed / 3600000);
+                const minutes = Math.floor((elapsed % 3600000) / 60000);
+                const seconds = Math.floor((elapsed % 60000) / 1000);
+                const milliseconds = elapsed % 1000;
+                
+                chronoDisplay.textContent = 
+                    `${String(hours).padStart(2, '0')}:` +
+                    `${String(minutes).padStart(2, '0')}:` +
+                    `${String(seconds).padStart(2, '0')}.` +
+                    `${String(milliseconds).padStart(3, '0')}`;
+            }
+            
+            // Botão de voltas pode ser adicionado aqui
+        }
+        
+        function setupAlarm() {
+            const btnSetAlarm = document.getElementById('btnSetAlarm');
+            
+            btnSetAlarm.addEventListener('click', setAlarm);
+            
+            function setAlarm() {
+                const alarmTime = alarmTimeInput.value;
+                if (!alarmTime) {
+                    alert("Por favor, defina um horário para o alarme");
+                    return;
+                }
+                
+                if (activeAlarm) {
+                    clearInterval(activeAlarm);
+                }
+                
+                activeAlarm = setInterval(() => {
+                    const now = new Date();
+                    const currentHours = String(now.getHours()).padStart(2, '0');
+                    const currentMinutes = String(now.getMinutes()).padStart(2, '0');
+                    const currentTime = `${currentHours}:${currentMinutes}`;
+                    
+                    if (currentTime === alarmTime) {
+                        triggerAlarm();
+                    }
+                }, 1000);
+                
+                alarmStatus.textContent = `Alarme definido para ${alarmTime}`;
+                alarmStatus.style.color = 'var(--success)';
+            }
+            
+            function triggerAlarm() {
+                const soundSelect = document.getElementById('alarmSound');
+                alarmSoundPlayer.src = alarmSounds[soundSelect.value];
+                alarmSoundPlayer.loop = true;
+                alarmSoundPlayer.play();
+                
+                // Mostra alerta visual
+                alarmStatus.textContent = 'ALARME TOCANDO!';
+                alarmStatus.style.color = 'var(--danger)';
+                alarmStatus.style.animation = 'pulse 0.5s infinite';
+                
+                // Se notificações ativadas
+                if (notificationPermission) {
                     new Notification('⏰ Alarme!', {
                         body: 'Hora de acordar!',
-                        icon: 'https://cdn-icons-png.flaticon.com/512/3114/3114883.png',
-                        vibrate: [200, 100, 200]
+                        icon: 'https://cdn-icons-png.flaticon.com/512/3114/3114883.png'
                     });
                 }
+                
+                // Adiciona botão para silenciar
+                const btnSilence = document.createElement('button');
+                btnSilence.textContent = 'Silenciar';
+                btnSilence.style.marginTop = '1rem';
+                btnSilence.style.padding = '0.5rem 1rem';
+                btnSilence.style.background = 'var(--danger)';
+                btnSilence.style.color = 'white';
+                btnSilence.style.border = 'none';
+                btnSilence.style.borderRadius = '5px';
+                btnSilence.style.cursor = 'pointer';
+                btnSilence.addEventListener('click', () => {
+                    alarmSoundPlayer.pause();
+                    alarmSoundPlayer.currentTime = 0;
+                    alarmStatus.textContent = `Alarme silenciado (próximo: ${alarmTimeInput.value})`;
+                    alarmStatus.style.color = 'var(--secondary)';
+                    alarmStatus.style.animation = 'none';
+                    btnSilence.remove();
+                });
+                
+                alarmStatus.appendChild(document.createElement('br'));
+                alarmStatus.appendChild(btnSilence);
             }
-        });
-
-        // Carrega o relógio com fallback
-        window.addEventListener('load', () => {
-            const frame = document.getElementById('clockFrame');
-            frame.onerror = () => {
-                frame.src = 'relogio.html';
-                console.log('Tentando recarregar o relógio...');
-            };
-        });
+        }
+        
+        // Animação de pulsação para o alarme
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { opacity: 1; }
+                50% { opacity: 0.5; }
+                100% { opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
