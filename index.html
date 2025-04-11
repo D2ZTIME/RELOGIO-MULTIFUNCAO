@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Relógio Digital Completo</title>
+  <style>
+    :root {
+      --bg-color: #121212;
+      --text-color: #ffffff;
+      --box-color: #1f1f1f;
+      --button-bg: #333;
+      --button-hover: #555;
+    }
+    body.light {
+      --bg-color: #f4f4f4;
+      --text-color: #111;
+      --box-color: #ffffff;
+      --button-bg: #ddd;
+      --button-hover: #bbb;
+    }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .clock-container {
+      background-color: var(--box-color);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.5);
+      text-align: center;
+      width: 100%;
+      max-width: 600px;
+    }
+    .time {
+      font-size: 5em;
+      margin-bottom: 0.2em;
+    }
+    .date, .weather {
+      font-size: 1.2em;
+      margin-bottom: 0.5em;
+    }
+    .controls, .alarm-set, .options, .silence {
+      margin-top: 15px;
+    }
+    button {
+      padding: 10px 15px;
+      margin: 5px;
+      font-size: 1em;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background-color: var(--button-bg);
+      color: var(--text-color);
+      transition: all 0.2s;
+      box-shadow: 0 4px var(--button-hover);
+      position: relative;
+      top: 0;
+    }
+    button:hover {
+      background-color: var(--button-hover);
+      top: 2px;
+      box-shadow: 0 2px var(--button-hover);
+    }
+    input[type="time"], select {
+      background: var(--button-bg);
+      color: var(--text-color);
+      border: none;
+      padding: 8px;
+      border-radius: 10px;
+    }
+    .chrono-display {
+      font-size: 2em;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="clock-container">
+    <div class="time" id="clock">00:00:00</div>
+    <div class="date" id="date">--/--/----</div>
+    <div class="weather" id="weather">Clima: --°C</div>
+
+    <div class="chrono-display" id="chrono">Cronômetro: 00:00</div>
+
+    <div class="controls">
+      <button onclick="startTimer()">Iniciar</button>
+      <button onclick="pauseTimer()">Pausar</button>
+      <button onclick="resumeTimer()">Continuar</button>
+      <button onclick="stopTimer()">Reset</button>
+    </div>
+
+    <div class="alarm-set">
+      <label for="alarmTime">⏰ Alarme:</label>
+      <input type="time" id="alarmTime">
+      <select id="alarmSoundSelect">
+        <option value="alarm_clock">Despertador</option>
+        <option value="digital_watch">Beep Digital</option>
+        <option value="school_bell">Sino</option>
+      </select>
+    </div>
+
+    <div class="options">
+      <button onclick="toggleTheme()">Tema Claro/Escuro</button>
+      <button onclick="toggleFullscreen()">Tela Cheia</button>
+    </div>
+
+    <div class="silence">
+      <button onclick="silenceAlarm()">Silenciar Alarme</button>
+    </div>
+  </div>
+
+  <audio id="alarmSound" preload="auto"></audio>
+
+  <script>
+    const alarmSound = document.getElementById("alarmSound");
+    const soundMap = {
+      "alarm_clock": "https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg",
+      "digital_watch": "https://actions.google.com/sounds/v1/alarms/beep_short.ogg",
+      "school_bell": "https://actions.google.com/sounds/v1/alarms/medium_bell_ringing_near.ogg"
+    };
+
+    function updateTime() {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('pt-BR');
+      const dateString = now.toLocaleDateString('pt-BR');
+      document.getElementById('clock').textContent = timeString;
+      document.getElementById('date').textContent = dateString;
+
+      const alarmTime = document.getElementById('alarmTime').value;
+      if (alarmTime) {
+        const current = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+        if (current === alarmTime) {
+          const selectedSound = document.getElementById("alarmSoundSelect").value;
+          alarmSound.src = soundMap[selectedSound];
+          alarmSound.play();
+        }
+      }
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle("light");
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    let timer = null;
+    let time = 0;
+    function updateChronoDisplay() {
+      const min = String(Math.floor(time / 60)).padStart(2, '0');
+      const sec = String(time % 60).padStart(2, '0');
+      document.getElementById('chrono').textContent = "Cronômetro: " + min + ":" + sec;
+    }
+    function startTimer() {
+      if (timer !== null) return;
+      timer = setInterval(() => {
+        time++;
+        updateChronoDisplay();
+      }, 1000);
+    }
+    function pauseTimer() {
+      clearInterval(timer);
+      timer = null;
+    }
+    function resumeTimer() {
+      if (!timer) {
+        timer = setInterval(() => {
+          time++;
+          updateChronoDisplay();
+        }, 1000);
+      }
+    }
+    function stopTimer() {
+      clearInterval(timer);
+      timer = null;
+      time = 0;
+      updateChronoDisplay();
+    }
+
+    function silenceAlarm() {
+      alarmSound.pause();
+      alarmSound.currentTime = 0;
+    }
+
+    function getFakeWeather() {
+      const temp = Math.floor(Math.random() * 10) + 20;
+      document.getElementById("weather").textContent = "Clima: " + temp + "°C";
+    }
+
+    setInterval(updateTime, 1000);
+    updateTime();
+    getFakeWeather();
+  </script>
+</body>
+</html>
