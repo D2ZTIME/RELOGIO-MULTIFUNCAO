@@ -2,13 +2,12 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#000000">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Relógio Digital Premium</title>
     <style>
         body {
             margin: 0;
-            padding: 0;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             background-color: #000;
             color: #0f0;
             font-family: 'Courier New', monospace;
@@ -16,73 +15,20 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
             text-align: center;
-            user-select: none;
-        }
-
-        .header {
-            font-size: clamp(16px, 3vw, 24px);
-            margin-bottom: 20px;
+            overflow: hidden;
         }
 
         .clock {
             font-size: clamp(40px, 15vw, 120px);
             letter-spacing: 5px;
-            margin: 20px 0;
+            margin: 10px;
         }
 
-        .controls {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-        }
-
-        .settings-btn {
-            background: none;
-            border: none;
-            color: #0f0;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 10px;
-        }
-
-        .settings-menu {
-            display: none;
-            background-color: #111;
-            border: 1px solid #0f0;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-        }
-
-        .settings-menu.show {
-            display: block;
-        }
-
-        .option {
-            margin: 8px 0;
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 3px;
-        }
-
-        .option:hover {
-            background-color: #222;
-        }
-
-        .footer {
-            position: fixed;
-            bottom: 10px;
-            left: 0;
-            right: 0;
-            font-size: 12px;
-            color: #333;
-            text-align: center;
+        .title {
+            font-size: clamp(16px, 3vw, 24px);
+            margin-bottom: 20px;
         }
 
         @media (orientation: landscape) {
@@ -93,98 +39,20 @@
     </style>
 </head>
 <body>
-    <div class="header">Relógio Digital Premium</div>
+    <div class="title">Relógio Digital Premium</div>
     <div class="clock" id="clock">00:00:00</div>
-    
-    <div class="controls">
-        <div class="settings-menu" id="settingsMenu">
-            <div class="option" onclick="toggleFormat()">Alternar 12H/24H</div>
-            <div class="option" onclick="changeColor('white')">Cor Branca</div>
-            <div class="option" onclick="changeColor('#0f0')">Cor Verde</div>
-            <div class="option" onclick="changeColor('#0af')">Cor Azul</div>
-            <div class="option" onclick="toggleTheme()">Alternar Tema</div>
-        </div>
-        <button class="settings-btn" onclick="toggleMenu()">⚙️</button>
-    </div>
-
-    <div class="footer">Desenvolvido por D2ZTime © 2024</div>
 
     <script>
-        // Configurações
-        let is24HourFormat = true;
-        let currentColor = '#0f0';
-        let isDarkTheme = true;
-
-        // Elementos DOM
-        const clockElement = document.getElementById('clock');
-        const settingsMenu = document.getElementById('settingsMenu');
-
-        // Atualizar relógio
         function updateClock() {
             const now = new Date();
-            let hours = now.getHours();
+            const hours = now.getHours().toString().padStart(2, '0');
             const minutes = now.getMinutes().toString().padStart(2, '0');
             const seconds = now.getSeconds().toString().padStart(2, '0');
-            
-            if (!is24HourFormat) {
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12 || 12;
-                clockElement.textContent = `${hours}:${minutes}:${seconds} ${ampm}`;
-            } else {
-                clockElement.textContent = `${hours}:${minutes}:${seconds}`;
-            }
+            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
         }
 
-        // Alternar menu de configurações
-        function toggleMenu() {
-            settingsMenu.classList.toggle('show');
-        }
-
-        // Alternar formato de hora
-        function toggleFormat() {
-            is24HourFormat = !is24HourFormat;
-            updateClock();
-            settingsMenu.classList.remove('show');
-        }
-
-        // Mudar cor do texto
-        function changeColor(color) {
-            currentColor = color;
-            document.body.style.color = color;
-            document.querySelector('.settings-btn').style.color = color;
-            settingsMenu.style.borderColor = color;
-            settingsMenu.classList.remove('show');
-        }
-
-        // Alternar tema
-        function toggleTheme() {
-            isDarkTheme = !isDarkTheme;
-            document.body.style.backgroundColor = isDarkTheme ? '#000' : '#111';
-            settingsMenu.style.backgroundColor = isDarkTheme ? '#111' : '#222';
-            settingsMenu.classList.remove('show');
-        }
-
-        // Configuração PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').then(registration => {
-                    console.log('ServiceWorker registrado com sucesso');
-                }).catch(err => {
-                    console.log('Falha ao registrar ServiceWorker:', err);
-                });
-            });
-        }
-
-        // Atualizar relógio a cada segundo
         setInterval(updateClock, 1000);
-        updateClock(); // Inicializar imediatamente
-
-        // Fechar menu ao clicar fora
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.controls')) {
-                settingsMenu.classList.remove('show');
-            }
-        });
+        updateClock();
     </script>
 </body>
 </html>
