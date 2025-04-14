@@ -24,6 +24,11 @@
         }
         
         body {
+
+              <header style="text-align: center; padding: 20px 0;">
+  <img src="D2Z logo.png" alt="Logo D2Z" style="height: 80px;">
+</header>
+            
             font-family: 'Segoe UI', system-ui;
             background: var(--light);
             color: var(--dark);
@@ -404,10 +409,7 @@
             checkNotificationPermission();
         });
         
-        <header style="text-align: center; padding: 20px 0;">
-  <img src="D2Z logo.png" alt="Logo D2Z" style="height: 80px;">
-</header>
-
+      
         function updateClock() {
             const now = new Date();
             clockElement.textContent = now.toLocaleTimeString('pt-BR');
