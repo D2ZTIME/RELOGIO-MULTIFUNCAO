@@ -1,62 +1,62 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relógio Digital Premium</title>
-    <style>
-        :root {
-            --bg-color: #121212;
-            --text-color: #ffffff;
-            --primary-color: #4a6bff;
-            --secondary-color: #6c757d;
-        }
-        
-        body {
-            font-family: 'Segoe UI', system-ui;
-            margin: 0;
-            padding: 0;
-            background: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        
-        .clock-container {
-            background: var(--bg-color);
-            padding: 2rem;
-            border-radius: 1rem;
-            text-align: center;
-        }
-        
-        .time {
-            font-size: 5rem;
-            margin-bottom: 1rem;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D2Z Clock</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="clock-container">
-        <div class="time" id="time">00:00:00</div>
-        <div class="date" id="date">Segunda-feira, 01 de Janeiro de 2023</div>
-    </div>
+  <div class="background-overlay"></div>
+  <div class="app">
+    <aside class="sidebar">
+      <button class="menu-btn active" data-section="clock">🕒 Relógio</button>
+      <button class="menu-btn" data-section="alarm">⏰ Alarme</button>
+      <button class="menu-btn" data-section="stopwatch">⏱ Cronômetro</button>
+      <button class="menu-btn" data-section="timer">⏳ Timer</button>
+      <button class="menu-btn" data-section="pomodoro">🍅 Pomodoro</button>
+      <button class="menu-btn" data-section="weather">🌤 Tempo</button>
+    </aside>
 
-    <script>
-        function updateTime() {
-            const now = new Date();
-            document.getElementById('time').textContent = now.toLocaleTimeString();
-            document.getElementById('date').textContent = now.toLocaleDateString('pt-BR', { 
-                weekday: 'long', 
-                day: 'numeric', 
-                month: 'long', 
-                year: 'numeric' 
-            });
-        }
-        
-        setInterval(updateTime, 1000);
-        updateTime();
-    </script>
+    <main class="content">
+      <section id="clock-section" class="section active">
+        <div id="clock" class="clock">00:00:00</div>
+        <div id="date" class="date">Segunda-feira, 1 de Janeiro de 2025</div>
+      </section>
+
+      <section id="alarm-section" class="section">
+        <h2>Configurar Alarme</h2>
+        <input type="time" id="alarm-time">
+        <button id="set-alarm">Definir Alarme</button>
+      </section>
+
+      <section id="stopwatch-section" class="section">
+        <h2>Cronômetro</h2>
+        <div id="stopwatch-display" style="font-size: 3rem; margin: 1rem 0;">00:00</div>
+        <button id="start-stopwatch">Iniciar</button>
+        <button id="pause-stopwatch">Pausar</button>
+        <button id="reset-stopwatch">Resetar</button>
+      </section>
+
+      <section id="timer-section" class="section">
+        <h2>Timer</h2>
+        <p>Função em breve</p>
+      </section>
+
+      <section id="pomodoro-section" class="section">
+        <h2>Pomodoro</h2>
+        <div id="pomodoro-display" style="font-size: 3rem; margin: 1rem 0;">25:00</div>
+        <button id="start-pomodoro">Iniciar Pomodoro</button>
+        <button id="reset-pomodoro">Resetar</button>
+      </section>
+
+      <section id="weather-section" class="section">
+        <h2>Previsão do Tempo</h2>
+        <p>Função em breve</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
